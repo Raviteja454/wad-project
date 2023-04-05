@@ -1,0 +1,54 @@
+const form = document.querySelector('#signup-form');
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const usernameInput = document.querySelector('#username');
+  const passwordInput = document.querySelector('#password');
+
+  const username = usernameInput.value;
+  const password = passwordInput.value;
+
+  const userData = {
+    username: username,
+    password: password
+  };
+
+  const users = loadUsers();
+
+  if (userExists(users, username)) {
+    alert('Username already exists');
+  } else {
+    users.push(userData);
+    saveUsers(users);
+    alert('User created successfully');
+    window.location.href = 'home.html';
+  }
+});
+
+function loadUsers() {
+  let users = [];
+
+  try {
+    const data = fs.readFileSync('users.json');
+    users = JSON.parse(data);
+  } catch (error) {
+    console.error(error);
+  }
+
+  return users;
+}
+
+function saveUsers(users) {
+  const data = JSON.stringify(users);
+
+  try {
+    fs.writeFileSync('users.json', data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function userExists(users, username) {
+  return users.some(user => user.username === username);
+}
